@@ -1,0 +1,56 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux8Way16.hdl
+
+/**
+ * 8-way 16-bit multiplexor:
+ * out = a if sel == 000
+ *       b if sel == 001
+ *       etc.
+ *       h if sel == 111
+ */
+
+CHIP Mux8Way16 {
+    IN a[16], b[16], c[16], d[16],
+       e[16], f[16], g[16], h[16],
+       sel[3];
+    OUT out[16];
+
+    PARTS:
+    // Put your code here:
+    Not (in=sel[0], out=nsel0);
+    Not (in=sel[1], out=nsel1);
+    Not (in=sel[2], out=nsel2);
+
+    And (a=nsel0, b=nsel1, out=t1);
+    And (a=sel[0], b=nsel1, out=t2);
+    And (a=nsel0, b=sel[1], out=t3);
+    And (a=sel[0], b=sel[1], out=t4);
+
+    And (a=t1, b=nsel2, out=s1);
+    And (a=t2, b=nsel2, out=s2);
+    And (a=t3, b=nsel2, out=s3);
+    And (a=t4, b=nsel2, out=s4);
+    And (a=t1, b=sel[2], out=s5);
+    And (a=t2, b=sel[2], out=s6);
+    And (a=t3, b=sel[2], out=s7);
+    And (a=t4, b=sel[2], out=s8);
+
+    Mux16 (a=false, b=a, sel=s1, out=m1);
+    Mux16 (a=false, b=b, sel=s2, out=m2);
+    Mux16 (a=false, b=c, sel=s3, out=m3);
+    Mux16 (a=false, b=d, sel=s4, out=m4);
+    Mux16 (a=false, b=e, sel=s5, out=m5);
+    Mux16 (a=false, b=f, sel=s6, out=m6);
+    Mux16 (a=false, b=g, sel=s7, out=m7);
+    Mux16 (a=false, b=h, sel=s8, out=m8);
+
+    Or16 (a=m1, b=m2, out=n2);
+    Or16 (a=n2, b=m3, out=n3);
+    Or16 (a=n3, b=m4, out=n4);
+    Or16 (a=n4, b=m5, out=n5);
+    Or16 (a=n5, b=m6, out=n6);
+    Or16 (a=n6, b=m7, out=n7);
+    Or16 (a=n7, b=m8, out=out);
+}
